@@ -71,6 +71,9 @@
             --text-color: #FFF;
             --card-radius: 20px;
             --transition-speed: 0.3s;
+            --fast-color: #2FD18A;
+            --medium-color: #FFB74D;
+            --slow-color: #F44336;
         }
         
         * {
@@ -132,6 +135,7 @@
             background: rgba(255, 255, 255, 0.05);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid transparent;
+            position: relative;
         }
 
         .item:hover {
@@ -146,6 +150,7 @@
             align-items: center;
             gap: 12px;
             font-size: 16px;
+            flex: 1;
         }
 
         .item-left img {
@@ -170,12 +175,67 @@
             min-width: 100px;
             text-align: center;
             white-space: nowrap;
+            cursor: pointer;
         }
 
         .item-right:hover {
             background: var(--primary-dark);
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(47, 209, 138, 0.3);
+        }
+
+        .speed-indicator {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .speed-fast {
+            color: var(--fast-color);
+            border-color: rgba(47, 209, 138, 0.3);
+            background: rgba(47, 209, 138, 0.1);
+        }
+
+        .speed-medium {
+            color: var(--medium-color);
+            border-color: rgba(255, 183, 77, 0.3);
+            background: rgba(255, 183, 77, 0.1);
+        }
+
+        .speed-slow {
+            color: var(--slow-color);
+            border-color: rgba(244, 67, 54, 0.3);
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        .speed-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .speed-fast .speed-dot {
+            background-color: var(--fast-color);
+            box-shadow: 0 0 8px rgba(47, 209, 138, 0.5);
+        }
+
+        .speed-medium .speed-dot {
+            background-color: var(--medium-color);
+            box-shadow: 0 0 8px rgba(255, 183, 77, 0.5);
+        }
+
+        .speed-slow .speed-dot {
+            background-color: var(--slow-color);
+            box-shadow: 0 0 8px rgba(244, 67, 54, 0.5);
         }
 
         .notice {
@@ -191,6 +251,31 @@
         .notice strong {
             color: var(--primary-color);
             font-size: 15px;
+        }
+
+        .countdown-notice {
+            background: rgba(47, 209, 138, 0.15);
+            padding: 12px 15px;
+            border-radius: var(--card-radius);
+            font-size: 13px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px solid rgba(47, 209, 138, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .countdown-timer {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 16px;
+            padding: 2px 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            min-width: 30px;
+            text-align: center;
         }
 
         .logo-container {
@@ -286,6 +371,13 @@
                 height: 18px;
             }
             
+            .speed-indicator {
+                position: absolute;
+                top: 10px;
+                right: 15px;
+                margin-left: 0;
+            }
+            
             h2 {
                 font-size: 24px;
             }
@@ -293,6 +385,11 @@
             .logo {
                 width: 90px;
                 height: 90px;
+            }
+            
+            .countdown-notice {
+                flex-direction: column;
+                gap: 5px;
             }
         }
 
@@ -353,37 +450,55 @@
             <h2>Ax出海官方导航</h2>
             <p class="subtitle">请按 Ctrl+D 收藏本页到浏览器收藏夹</p>
 
+            <div class="countdown-notice" id="countdownNotice">
+                <span>⏱️ 正在测试线路速度，</span>
+                <span><span id="countdownText">10</span>秒后自动跳转到最快线路</span>
+                <span class="countdown-timer" id="countdownTimer">10</span>
+            </div>
+            
             <div class="notice">
                 导航地址 <strong class="url-display" id="currentUrl">ax.mxio.org</strong> 务必牢记
             </div>
             
             <div class="list">
-                <div class="item">
+                <div class="item" data-line="1" data-url="https://ax.mxio.org/">
                     <div class="item-left">
                         <img src="https://img.icons8.com/ios/50/ffffff/globe--v1.png" alt="出海线路">
                         <span>出海主线路</span>
+                        <div class="speed-indicator" id="speed1">
+                            <span class="speed-dot"></span>
+                            <span class="speed-text">测试中...</span>
+                        </div>
                     </div>
-                    <a href="https://ax.mxio.org/" target="_blank" rel="noopener noreferrer" aria-label="访问出海主线路">
+                    <a href="https://ax.mxio.org/" target="_blank" rel="noopener noreferrer" aria-label="访问出海主线路" class="line-link" data-line="1">
                         <div class="item-right">点击进入</div>
                     </a>
                 </div>
                 
-                <div class="item">
+                <div class="item" data-line="2" data-url="https://ax.mxio.org/">
                     <div class="item-left">
                         <img src="https://img.icons8.com/ios/50/ffffff/globe--v1.png" alt="国内优化出海线路">
                         <span>出海线路二(国内优化)</span>
+                        <div class="speed-indicator" id="speed2">
+                            <span class="speed-dot"></span>
+                            <span class="speed-text">测试中...</span>
+                        </div>
                     </div>
-                    <a href="https://ax.mxio.org/" target="_blank" rel="noopener noreferrer" aria-label="访问国内优化出海线路">
+                    <a href="https://ax.mxio.org/" target="_blank" rel="noopener noreferrer" aria-label="访问国内优化出海线路" class="line-link" data-line="2">
                         <div class="item-right">点击进入</div>
                     </a>
                 </div>
                 
-                <div class="item">
+                <div class="item" data-line="3" data-url="https://ax.botnet.cfd/">
                     <div class="item-left">
                         <img src="https://img.icons8.com/ios/50/ffffff/globe--v1.png" alt="海外优化出海线路">
                         <span>出海线路三(海外优化)</span>
+                        <div class="speed-indicator" id="speed3">
+                            <span class="speed-dot"></span>
+                            <span class="speed-text">测试中...</span>
+                        </div>
                     </div>
-                    <a href="https://ax.mxio.org/" target="_blank" rel="noopener noreferrer" aria-label="访问海外优化出海线路">
+                    <a href="https://ax.botnet.cfd/" target="_blank" rel="noopener noreferrer" aria-label="访问海外优化出海线路" class="line-link" data-line="3">
                         <div class="item-right">点击进入</div>
                     </a>
                 </div>
@@ -407,52 +522,292 @@
     </div>
 
     <script>
-        // 页面加载动画
+        // 线路速度测试和自动跳转功能
         document.addEventListener('DOMContentLoaded', function() {
             // 显示当前URL
             document.getElementById('currentUrl').textContent = window.location.hostname || 'ax.mxio.org';
             
-            // 平滑滚动到顶部
-            document.getElementById('logo').addEventListener('click', function(e) {
-                e.preventDefault();
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
+            // 线路配置
+            const lines = [
+                { id: 1, url: 'https://ax.mxio.org/', elementId: 'speed1', name: '出海主线路' },
+                { id: 2, url: 'https://ax.mxio.org/', elementId: 'speed2', name: '出海线路二(国内优化)' },
+                { id: 3, url: 'https://ax.botnet.cfd/', elementId: 'speed3', name: '出海线路三(海外优化)' }
+            ];
             
-            // 添加点击动画效果
-            const buttons = document.querySelectorAll('.item-right');
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    this.style.transform = 'scale(0.95)';
+            // 存储线路测试结果
+            const lineResults = {};
+            let autoRedirectEnabled = true;
+            let countdown = 10;
+            let countdownInterval;
+            
+            // 更新速度显示
+            function updateSpeedDisplay(lineId, speed, status) {
+                const element = document.getElementById(`speed${lineId}`);
+                const speedText = element.querySelector('.speed-text');
+                const speedDot = element.querySelector('.speed-dot');
+                
+                // 清除所有状态类
+                element.classList.remove('speed-fast', 'speed-medium', 'speed-slow');
+                
+                if (status === 'testing') {
+                    speedText.textContent = '测试中...';
+                    element.classList.add('speed-medium');
+                    return;
+                }
+                
+                if (status === 'error') {
+                    speedText.textContent = '测试失败';
+                    element.classList.add('speed-slow');
+                    return;
+                }
+                
+                // 根据速度设置状态
+                let speedClass = 'speed-slow';
+                let speedLabel = `${speed}ms`;
+                
+                if (speed < 300) {
+                    speedClass = 'speed-fast';
+                } else if (speed < 800) {
+                    speedClass = 'speed-medium';
+                }
+                
+                speedText.textContent = speedLabel;
+                element.classList.add(speedClass);
+                
+                // 存储结果
+                lineResults[lineId] = { speed, element, url: lines.find(l => l.id === lineId).url };
+            }
+            
+            // 测试单个线路速度
+            async function testLineSpeed(line) {
+                updateSpeedDisplay(line.id, 0, 'testing');
+                
+                const testUrl = `${line.url}?speedtest=${Date.now()}`;
+                const startTime = Date.now();
+                
+                try {
+                    // 使用Promise.race实现超时控制
+                    const timeoutPromise = new Promise((_, reject) => {
+                        setTimeout(() => reject(new Error('请求超时')), 5000);
+                    });
+                    
+                    // 发送请求测试速度
+                    const fetchPromise = fetch(testUrl, {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-cache'
+                    }).catch(() => {
+                        // 如果HEAD请求失败，尝试GET请求
+                        return fetch(line.url, {
+                            method: 'GET',
+                            mode: 'no-cors',
+                            cache: 'no-cache'
+                        });
+                    });
+                    
+                    await Promise.race([fetchPromise, timeoutPromise]);
+                    const endTime = Date.now();
+                    const speed = endTime - startTime;
+                    
+                    updateSpeedDisplay(line.id, speed, 'success');
+                    return { line, speed, success: true };
+                } catch (error) {
+                    console.error(`线路 ${line.name} 测试失败:`, error);
+                    updateSpeedDisplay(line.id, 0, 'error');
+                    return { line, speed: Infinity, success: false };
+                }
+            }
+            
+            // 测试所有线路速度
+            async function testAllLines() {
+                console.log('开始测试线路速度...');
+                
+                // 并行测试所有线路
+                const promises = lines.map(line => testLineSpeed(line));
+                const results = await Promise.all(promises);
+                
+                console.log('线路测试完成:', results);
+                
+                // 找出最快的可用线路
+                const successfulResults = results.filter(r => r.success);
+                if (successfulResults.length > 0) {
+                    successfulResults.sort((a, b) => a.speed - b.speed);
+                    const fastestLine = successfulResults[0];
+                    
+                    console.log(`最快线路: ${fastestLine.line.name}, 速度: ${fastestLine.speed}ms`);
+                    
+                    // 标记最快线路
+                    const fastestElement = document.getElementById(`speed${fastestLine.line.id}`);
+                    fastestElement.style.borderColor = 'var(--fast-color)';
+                    fastestElement.style.boxShadow = '0 0 10px rgba(47, 209, 138, 0.5)';
+                    
+                    return fastestLine;
+                }
+                
+                return null;
+            }
+            
+            // 开始倒计时
+            function startCountdown() {
+                const countdownText = document.getElementById('countdownText');
+                const countdownTimer = document.getElementById('countdownTimer');
+                
+                countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownText.textContent = countdown;
+                    countdownTimer.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        performAutoRedirect();
+                    }
+                }, 1000);
+            }
+            
+            // 执行自动跳转
+            async function performAutoRedirect() {
+                if (!autoRedirectEnabled) return;
+                
+                console.log('开始自动跳转到最快线路...');
+                
+                // 测试线路速度
+                const fastestLine = await testAllLines();
+                
+                if (fastestLine) {
+                    // 显示跳转提示
+                    const countdownNotice = document.getElementById('countdownNotice');
+                    countdownNotice.innerHTML = `
+                        <span>✅ 已检测到最快线路: <strong>${fastestLine.line.name}</strong> (${fastestLine.speed}ms)</span>
+                        <span>正在跳转...</span>
+                    `;
+                    countdownNotice.style.background = 'rgba(47, 209, 138, 0.2)';
+                    
+                    // 延迟跳转让用户看到提示
                     setTimeout(() => {
-                        this.style.transform = '';
-                    }, 150);
-                });
-            });
+                        if (autoRedirectEnabled) {
+                            console.log(`自动跳转到: ${fastestLine.line.url}`);
+                            window.open(fastestLine.line.url, '_blank');
+                        }
+                    }, 1500);
+                } else {
+                    // 所有线路都测试失败
+                    const countdownNotice = document.getElementById('countdownNotice');
+                    countdownNotice.innerHTML = `
+                        <span>⚠️ 所有线路测试失败，请手动选择线路</span>
+                    `;
+                    countdownNotice.style.background = 'rgba(244, 67, 54, 0.15)';
+                    countdownNotice.style.borderColor = 'rgba(244, 67, 54, 0.3)';
+                }
+            }
             
-            // 复制功能
-            const urlDisplay = document.getElementById('currentUrl');
-            urlDisplay.addEventListener('click', function() {
-                const text = this.textContent;
-                navigator.clipboard.writeText(text).then(() => {
-                    const originalText = this.textContent;
-                    this.textContent = '已复制到剪贴板！';
-                    this.style.background = 'rgba(47, 209, 138, 0.3)';
-                    setTimeout(() => {
-                        this.textContent = originalText;
-                        this.style.background = '';
-                    }, 2000);
+            // 用户点击线路时取消自动跳转
+            function setupLineClickHandlers() {
+                const lineLinks = document.querySelectorAll('.line-link');
+                lineLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        // 允许默认跳转行为
+                        autoRedirectEnabled = false;
+                        clearInterval(countdownInterval);
+                        
+                        const lineId = this.getAttribute('data-line');
+                        const line = lines.find(l => l.id == lineId);
+                        
+                        // 更新倒计时提示
+                        const countdownNotice = document.getElementById('countdownNotice');
+                        countdownNotice.innerHTML = `
+                            <span>✅ 您选择了: <strong>${line.name}</strong></span>
+                            <span>正在跳转...</span>
+                        `;
+                        countdownNotice.style.background = 'rgba(47, 209, 138, 0.2)';
+                        
+                        console.log(`用户手动选择线路: ${line.name}`);
+                    });
                 });
-            });
+                
+                // 用户点击其他任何地方也可能取消自动跳转
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.line-link')) {
+                        autoRedirectEnabled = false;
+                        clearInterval(countdownInterval);
+                        
+                        const countdownNotice = document.getElementById('countdownNotice');
+                        countdownNotice.innerHTML = `
+                            <span>⏸️ 自动跳转已取消</span>
+                            <span>请手动选择线路</span>
+                        `;
+                        countdownNotice.style.background = 'rgba(255, 183, 77, 0.15)';
+                        countdownNotice.style.borderColor = 'rgba(255, 183, 77, 0.3)';
+                    }
+                }, { once: true });
+            }
             
-            // 页面加载淡入效果
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s ease';
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+            // 初始化
+            function init() {
+                console.log('初始化线路速度测试...');
+                
+                // 设置线路点击处理器
+                setupLineClickHandlers();
+                
+                // 开始测试线路并倒计时
+                testAllLines().then(fastestLine => {
+                    if (fastestLine) {
+                        const countdownNotice = document.getElementById('countdownNotice');
+                        countdownNotice.innerHTML = `
+                            <span>✅ 最快线路: <strong>${fastestLine.line.name}</strong> (${fastestLine.speed}ms)</span>
+                            <span><span id="countdownText">${countdown}</span>秒后自动跳转</span>
+                            <span class="countdown-timer" id="countdownTimer">${countdown}</span>
+                        `;
+                    }
+                });
+                
+                // 开始倒计时
+                startCountdown();
+                
+                // 平滑滚动到顶部
+                document.getElementById('logo').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+                
+                // 添加点击动画效果
+                const buttons = document.querySelectorAll('.item-right');
+                buttons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    });
+                });
+                
+                // 复制功能
+                const urlDisplay = document.getElementById('currentUrl');
+                urlDisplay.addEventListener('click', function() {
+                    const text = this.textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        const originalText = this.textContent;
+                        this.textContent = '已复制到剪贴板！';
+                        this.style.background = 'rgba(47, 209, 138, 0.3)';
+                        setTimeout(() => {
+                            this.textContent = originalText;
+                            this.style.background = '';
+                        }, 2000);
+                    });
+                });
+                
+                // 页面加载淡入效果
+                document.body.style.opacity = '0';
+                document.body.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                }, 100);
+            }
+            
+            // 启动初始化
+            init();
         });
         
         // 键盘快捷键
